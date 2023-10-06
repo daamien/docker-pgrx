@@ -9,7 +9,7 @@ USER postgres
                                                                                                         
 ENV PATH="${PATH}:/usr/local/cargo/bin/:~postgres/.cargo/bin"                                           
                                                                                                         
-RUN cargo install cargo-pgrx && \                                                                       
+RUN cargo install --locked cargo-pgrx && \                                                                       
     cargo pgrx init
 
 WORKDIR /pgrx
