@@ -6,7 +6,8 @@ RUN echo 'deb [trusted=yes] https://repo.goreleaser.com/apt/ /' \
 RUN apt-get update && apt-get install -y \
     gettext-base \
     libclang-dev \
-    nfpm
+    nfpm \
+    postgresql-server-dev-all
 
 RUN adduser --disabled-password postgres                                                                
 
