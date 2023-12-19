@@ -9,8 +9,6 @@ RUN apt-get update && apt-get install -y \
     nfpm \
     postgresql-server-dev-all
 
-RUN adduser --disabled-password postgres                                                                
-
 USER postgres
 
 ENV USER=postgres
