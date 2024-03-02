@@ -29,4 +29,4 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           push: true
-          tags: daamien/pgrx:latest
+          tags: daamien/pgrx:${GITHUB_REF##*/}
