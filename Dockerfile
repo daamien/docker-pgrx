@@ -1,9 +1,9 @@
-FROM rust:1                                                                                             
+FROM rust:1
 
 # Build Arguments
 ARG UID=1000
 ARG GID=1000
-ARG PGRX_VERSION=0.11.0
+ARG PGRX_VERSION=0.11.3
 
 # Create the postgres user with the given uid/gid
 # If you're not using Docker Desktop and your UID / GID is not 1000 then
@@ -13,7 +13,7 @@ ARG PGRX_VERSION=0.11.0
 #
 # docker build --build-arg UID=`id -u` --build-arg GID=`id- g`  .
 #
-RUN groupadd -g "${GID}" postgres \                                                                                  
+RUN groupadd -g "${GID}" postgres \
  && useradd --create-home --no-log-init -u "${UID}" -g "${GID}" postgres
 
 # nfpm repo
@@ -32,9 +32,9 @@ USER postgres
 ENV USER=postgres
 
 ENV PATH="${PATH}:/usr/local/cargo/bin/:~postgres/.cargo/bin"
-                                                                                                        
+
 RUN rustup component add clippy && \
-    cargo install --locked --version 0.11.0 cargo-pgrx && \                                                                       
+    cargo install --locked --version ${PGRX_VERSION} cargo-pgrx && \
     cargo pgrx init
 
 WORKDIR /pgrx
