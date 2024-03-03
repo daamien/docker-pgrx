@@ -4,8 +4,7 @@ name: ci
 "on":
   push:
     branches:
-      - 'main'
-      - '0.11'
+      - 'latest'
       - '0.12'
 
 jobs:
