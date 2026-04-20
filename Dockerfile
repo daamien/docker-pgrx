@@ -1,9 +1,9 @@
-FROM rust:1
+FROM rust:1-slim-trixie 
 
 # Build Arguments
 ARG UID=1000
 ARG GID=1000
-ARG PGRX_VERSION=0.11.3
+ARG PGRX_VERSION=0.18.0
 
 # Create the postgres user with the given uid/gid
 # If you're not using Docker Desktop and your UID / GID is not 1000 then
@@ -13,29 +13,39 @@ ARG PGRX_VERSION=0.11.3
 #
 # docker build --build-arg UID=`id -u` --build-arg GID=`id- g`  .
 #
-RUN groupadd -g "${GID}" postgres \
- && useradd --create-home --no-log-init -u "${UID}" -g "${GID}" postgres
-
-# nfpm repo
-RUN echo 'deb [trusted=yes] https://repo.goreleaser.com/apt/ /' \
-    | tee /etc/apt/sources.list.d/goreleaser.list
+RUN groupadd -g "${GID}" pgrx \
+ && useradd --create-home --no-log-init -u "${UID}" -g "${GID}" pgrx
 
 RUN apt-get update && apt-get install -y \
+    bison \
+    build-essential \
+    flex \
     gettext-base \
     libclang-dev \
-    nfpm \
-    postgresql-server-dev-all
+    pkg-config \
+    libreadline6-dev \
+    libssl-dev \
+    libicu-dev \
+    zlib1g-dev \
+    libxml2-dev \
+    libxslt-dev \
+    libssl-dev \
+    libxml2-utils \
+    xsltproc \
+    ccache \
+ && rm -rf /var/lib/apt/lists/*
 
-USER postgres
+USER pgrx
 
 # This is required by `cargo pgrx test`
-ENV USER=postgres
+ENV USER=pgrx
 
-ENV PATH="${PATH}:/usr/local/cargo/bin/:~postgres/.cargo/bin"
+ENV PATH="${PATH}:/usr/local/cargo/bin/:~pgrx/.cargo/bin"
 
-RUN rustup component add clippy && \
+RUN rustup default stable && \ 
+    rustup component add clippy && \
     cargo install --locked --version ${PGRX_VERSION} cargo-pgrx && \
-    cargo pgrx init
+    cargo pgrx init --pg18=download
 
-WORKDIR /pgrx
-VOLUME /pgrx
+WORKDIR /home/pgrx
+VOLUME /home/pgrx
