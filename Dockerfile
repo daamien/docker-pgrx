@@ -33,13 +33,15 @@ RUN apt-get update && apt-get install -y \
     libxml2-utils \
     xsltproc \
     ccache \
+    hx \
+    vim \
+    gosu \
  && rm -rf /var/lib/apt/lists/*
 
 USER pgrx
 
-# This is required by `cargo pgrx test`
 ENV USER=pgrx
-
+ENV PG_VERSION=pg18 
 ENV PATH="${PATH}:/usr/local/cargo/bin/:~pgrx/.cargo/bin"
 
 RUN rustup default stable && \ 
@@ -47,5 +49,14 @@ RUN rustup default stable && \
     cargo install --locked --version ${PGRX_VERSION} cargo-pgrx && \
     cargo pgrx init --pg18=download
 
-WORKDIR /home/pgrx
-VOLUME /home/pgrx
+WORKDIR /pgrx
+VOLUME /pgrx
+
+
+# Switch back to root so the entrypoint can call usermod
+USER root
+
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+ENTRYPOINT ["/entrypoint.sh"]
